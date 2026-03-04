@@ -1,73 +1,63 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { mangas as staticMangas } from "../../../data/mangas";
+import { mangas } from "@/app/data/mangas";
 
-export default function Capitulo({ params }: any) {
-  const resolvedParams = use(params);
-  const obraId = resolvedParams.obra;
-  const capNumber = Number(resolvedParams.cap);
+interface Props {
+  params: {
+    obra: string;
+    cap: string;
+  };
+}
+
+export default function Capitulo({ params }: Props) {
+  const obraId = params.obra;
+  const capNumber = Number(params.cap);
 
   const [manga, setManga] = useState<any>(null);
-  const [chapter, setChapter] = useState<any>(null);
-  const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("admin_mangas");
-    const localMangas = saved ? JSON.parse(saved) : [];
-
-    const all = [...staticMangas, ...localMangas];
-    const found = all.find((m) => m.id === obraId);
-
+    const found = mangas.find((m) => m.id === obraId);
     setManga(found);
+  }, [obraId]);
 
-    const foundChapter = found?.chapters?.find(
-      (c: any) => c.number === capNumber
-    );
+  if (!manga) {
+    return <div style={{ padding: 20 }}>Mangá não encontrado</div>;
+  }
 
-    setChapter(foundChapter);
-
-    if (foundChapter) {
-      const pages = [];
-      for (let i = 1; i <= foundChapter.pages; i++) {
-        pages.push(`/mangas/${obraId}/${capNumber}/${i}.jpg`);
-      }
-      setImages(pages);
-    }
-  }, [obraId, capNumber]);
-
-  if (!manga || !chapter)
-    return <div className="container">Capítulo não encontrado</div>;
-
-  const index = manga.chapters.findIndex(
-    (c: any) => c.number === capNumber
-  );
-
-  const prev = manga.chapters[index - 1];
-  const next = manga.chapters[index + 1];
+  const currentIndex = manga.chapters.indexOf(capNumber);
+  const prevCap = manga.chapters[currentIndex - 1];
+  const nextCap = manga.chapters[currentIndex + 1];
 
   return (
-    <div className="reader">
+    <div style={{ padding: 20 }}>
       <h1>{manga.title}</h1>
       <h2>Capítulo {capNumber}</h2>
 
-      <div className="nav">
-        {prev && (
-          <Link href={`/capitulo/${obraId}/${prev.number}`}>
-            ← {prev.number}
+      <div style={{ marginTop: 20 }}>
+        {[1, 2, 3, 4].map((page) => (
+          <img
+            key={page}
+            src={`/mangas/${obraId}/${capNumber}/${page}.jpg`}
+            style={{ width: "100%", marginBottom: 20 }}
+          />
+        ))}
+      </div>
+
+      <div style={{ marginTop: 30, display: "flex", gap: 15 }}>
+        {prevCap && (
+          <Link href={`/capitulo/${obraId}/${prevCap}`}>
+            <button>⬅ Capítulo {prevCap}</button>
           </Link>
         )}
-        {next && (
-          <Link href={`/capitulo/${obraId}/${next.number}`}>
-            {next.number} →
+
+        {nextCap && (
+          <Link href={`/capitulo/${obraId}/${nextCap}`}>
+            <button>Capítulo {nextCap} ➡</button>
           </Link>
         )}
       </div>
-
-      {images.map((src, i) => (
-        <img key={i} src={src} className="reader-img" />
-      ))}
     </div>
   );
 }
