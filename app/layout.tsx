@@ -3,11 +3,7 @@ import Navbar from "./components/Navbar";
 
 export const metadata = {
   title: "Imperial Mangas",
-  description: "Plataforma privada",
-  robots: {
-    index: false,
-    follow: false,
-  },
+  description: "Leia mangás online no Imperial Mangas",
 };
 
 export default function RootLayout({
@@ -16,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-br">
-      <body>
+    <html lang="pt-BR">
+      <body className="bg-[#0b0b0f] text-white min-h-screen">
         <Navbar />
         {children}
       </body>

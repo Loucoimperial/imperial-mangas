@@ -1,62 +1,91 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use } from "react";
 import Link from "next/link";
-import { mangas } from "@/app/data/mangas";
+import { mangas } from "@/data/mangas";
 
 interface Props {
-  params: {
-    obra: string;
-    cap: string;
-  };
+  params: Promise<{ obra: string; cap: string }>;
 }
 
 export default function Capitulo({ params }: Props) {
-  const obraId = params.obra;
-  const capNumber = Number(params.cap);
+  const resolvedParams = use(params);
 
-  const [manga, setManga] = useState<any>(null);
+  const obraId = resolvedParams.obra;
+  const capNumber = Number(resolvedParams.cap);
 
-  useEffect(() => {
-    const found = mangas.find((m) => m.id === obraId);
-    setManga(found);
-  }, [obraId]);
+  const manga = mangas.find((m) => m.id === obraId);
 
   if (!manga) {
-    return <div style={{ padding: 20 }}>Mangá não encontrado</div>;
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        Obra não encontrada.
+      </div>
+    );
   }
 
-  const currentIndex = manga.chapters.indexOf(capNumber);
-  const prevCap = manga.chapters[currentIndex - 1];
-  const nextCap = manga.chapters[currentIndex + 1];
+  const chapterIndex = manga.chapters.findIndex(
+    (c) => c.number === capNumber
+  );
+
+  if (chapterIndex === -1) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        Capítulo não encontrado.
+      </div>
+    );
+  }
+
+  const chapter = manga.chapters[chapterIndex];
+  const previous = manga.chapters[chapterIndex - 1];
+  const next = manga.chapters[chapterIndex + 1];
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>{manga.title}</h1>
-      <h2>Capítulo {capNumber}</h2>
+    <div className="min-h-screen bg-black text-white py-12 px-6">
+      <div className="max-w-4xl mx-auto">
 
-      <div style={{ marginTop: 20 }}>
-        {[1, 2, 3, 4].map((page) => (
-          <img
-            key={page}
-            src={`/mangas/${obraId}/${capNumber}/${page}.jpg`}
-            style={{ width: "100%", marginBottom: 20 }}
-          />
-        ))}
-      </div>
-
-      <div style={{ marginTop: 30, display: "flex", gap: 15 }}>
-        {prevCap && (
-          <Link href={`/capitulo/${obraId}/${prevCap}`}>
-            <button>⬅ Capítulo {prevCap}</button>
+        {/* Topo */}
+        <div className="flex justify-between items-center mb-10">
+          <Link
+            href={`/obra/${manga.id}`}
+            className="text-zinc-400 hover:text-white"
+          >
+            ← Voltar
           </Link>
-        )}
 
-        {nextCap && (
-          <Link href={`/capitulo/${obraId}/${nextCap}`}>
-            <button>Capítulo {nextCap} ➡</button>
-          </Link>
-        )}
+          <h1 className="text-xl font-semibold">
+            {manga.title} - Cap {chapter.number}
+          </h1>
+
+          <div />
+        </div>
+
+        {/* Área do capítulo */}
+        <div className="bg-zinc-900 p-10 rounded-2xl text-center text-zinc-400">
+          Aqui futuramente aparecerão as páginas do capítulo.
+        </div>
+
+        {/* Navegação */}
+        <div className="flex justify-between mt-10">
+          {previous ? (
+            <Link
+              href={`/capitulo/${manga.id}/${previous.number}`}
+              className="bg-zinc-800 hover:bg-zinc-700 px-6 py-3 rounded-xl"
+            >
+              ← Cap Anterior
+            </Link>
+          ) : <div />}
+
+          {next && (
+            <Link
+              href={`/capitulo/${manga.id}/${next.number}`}
+              className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl"
+            >
+              Próximo Cap →
+            </Link>
+          )}
+        </div>
+
       </div>
     </div>
   );

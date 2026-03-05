@@ -1,47 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export default function Navbar() {
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const u = localStorage.getItem("user");
-    if (u) setUser(JSON.parse(u));
-  }, []);
-
   return (
-    <nav className="navbar">
-      <div className="nav-container">
-        {/* Logo */}
-        <Link href="/" className="nav-logo">
-          Imperial <span>Mangas</span>
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-black/70 border-b border-white/5">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        
+        <Link href="/" className="text-2xl font-bold">
+          Imperial <span className="text-red-500">Mangas</span>
         </Link>
 
-        {/* Links */}
-        <div className="nav-links">
-          <Link href="/">Início</Link>
-          <Link href="/perfil">Perfil</Link>
-          <Link href="/admin">Admin</Link>
+        <nav className="flex gap-6 text-sm text-gray-300">
+          <Link href="/" className="hover:text-white transition">
+            Início
+          </Link>
+          <Link href="/mangas" className="hover:text-white transition">
+            Mangás
+          </Link>
+        </nav>
 
-          {user ? (
-            <button
-              className="logout-btn"
-              onClick={() => {
-                localStorage.removeItem("user");
-                window.location.reload();
-              }}
-            >
-              Sair
-            </button>
-          ) : (
-            <Link href="/login" className="login-btn">
-              Login
-            </Link>
-          )}
-        </div>
       </div>
-    </nav>
+    </header>
   );
 }
