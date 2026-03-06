@@ -5,50 +5,56 @@ import bcrypt from "bcryptjs";
 
 const handler = NextAuth({
 
- providers: [
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
 
-  CredentialsProvider({
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Senha", type: "password" }
+      },
 
-   name: "credentials",
+      async authorize(credentials) {
 
-   credentials: {
-    email: {},
-    password: {}
-   },
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
-   async authorize(credentials) {
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials.email
+          }
+        });
 
-    const user = await prisma.user.findUnique({
-     where:{ email: credentials?.email }
-    });
+        if (!user) return null;
 
-    if(!user) return null;
+        const validPassword = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
 
-    const valid = await bcrypt.compare(
-     credentials!.password,
-     user.password
-    );
+        if (!validPassword) return null;
 
-    if(!valid) return null;
+        return {
+          id: user.id,
+          name: user.username,
+          email: user.email,
+          role: user.role
+        };
 
-    return {
-     id:user.id,
-     email:user.email,
-     name:user.username,
-     role:user.role
-    };
+      }
+    })
+  ],
 
-   }
+  session: {
+    strategy: "jwt"
+  },
 
-  })
+  pages: {
+    signIn: "/login"
+  },
 
- ],
-
- session:{
-  strategy:"jwt"
- },
-
- secret:process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET
 
 });
 
