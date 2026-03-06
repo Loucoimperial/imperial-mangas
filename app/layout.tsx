@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 
 export const metadata = {
   title: "Imperial Mangas",
-  description: "Leia mangás online no Imperial Mangas",
+  description: "Leia mangás online gratuitamente",
 };
 
 export default function RootLayout({
@@ -13,9 +13,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className="bg-[#0b0b0f] text-white min-h-screen">
+      <body>
+
         <Navbar />
-        {children}
+
+        <main>
+          {children}
+        </main>
+
       </body>
     </html>
   );

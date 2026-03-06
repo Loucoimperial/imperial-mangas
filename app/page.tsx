@@ -2,98 +2,145 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { mangas as staticMangas } from "./data/mangas";
+import { Manga } from "./types/manga";
 
 export default function Home() {
-  const [allMangas, setAllMangas] = useState<any[]>([]);
-  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    const saved = localStorage.getItem("admin_mangas");
-    const localMangas = saved ? JSON.parse(saved) : [];
-    setAllMangas([...staticMangas, ...localMangas]);
-  }, []);
+const [allMangas,setAllMangas] = useState<Manga[]>([]);
+const [search,setSearch] = useState("");
 
-  const filtered = allMangas.filter((manga) =>
-    manga.title.toLowerCase().includes(search.toLowerCase())
-  );
+useEffect(()=>{
 
-  return (
-    <div>
+const saved = localStorage.getItem("admin_mangas");
+const localMangas = saved ? JSON.parse(saved) : [];
 
-      {/* 🔥 HERO CINEMATOGRÁFICO */}
-      <section className="relative h-[520px] flex items-center justify-center text-center overflow-hidden">
+setAllMangas([...staticMangas,...localMangas]);
 
-        <Image
-          src="/banner.jpg"
-          alt="Banner"
-          fill
-          priority
-          className="object-cover animate-[zoom_15s_ease-in-out_infinite_alternate]"
-        />
+},[]);
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-[#0b0b0f]" />
+const filtered = allMangas.filter(manga =>
+manga.title.toLowerCase().includes(search.toLowerCase())
+);
 
-        <div className="relative z-10 max-w-3xl px-6 animate-[fadeUp_1.2s_ease-out]">
-          <h1 className="text-6xl font-extrabold mb-6 tracking-tight">
-            Imperial <span className="text-red-500">Mangas</span>
-          </h1>
+const populares = allMangas.slice(0,8);
+const recentes = [...allMangas].reverse().slice(0,8);
 
-          <p className="text-lg text-gray-300 mb-8">
-            Leia seus mangás favoritos online com qualidade premium.
-          </p>
+return(
 
-          <a
-            href="#mangas"
-            className="inline-block bg-red-500 hover:bg-red-600 transition px-10 py-4 rounded-xl font-semibold shadow-lg hover:shadow-red-500/40 hover:scale-105 duration-300"
-          >
-            📖 Começar a Ler
-          </a>
-        </div>
-      </section>
+<div>
 
-      {/* 📚 LISTA */}
-      <section id="mangas" className="max-w-6xl mx-auto px-6 py-16">
+{/* BANNER */}
 
-        <input
-          type="text"
-          placeholder="Buscar mangá..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full mb-12 px-5 py-4 rounded-xl bg-[#14141a] border border-white/10 focus:outline-none focus:border-red-500 transition"
-        />
+<div className="home-banner">
 
-        {filtered.length === 0 ? (
-          <p className="text-gray-400">Nenhum mangá encontrado.</p>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
-            {filtered.map((manga) => (
-              <Link key={manga.id} href={`/obra/${manga.id}`}>
-                <div className="group bg-[#14141a] rounded-xl overflow-hidden hover:-translate-y-2 transition duration-300 cursor-pointer shadow-lg hover:shadow-red-500/20">
+<div className="banner-overlay">
 
-                  <div className="relative w-full h-[300px] overflow-hidden">
-                    <Image
-                      src={`/mangas/${manga.id}/cover.jpg`}
-                      alt={manga.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition duration-500"
-                    />
-                  </div>
+<h1>Imperial Mangas</h1>
+<p>Leia seus mangás favoritos online</p>
 
-                  <div className="p-4">
-                    <h2 className="text-sm font-semibold truncate group-hover:text-red-400 transition">
-                      {manga.title}
-                    </h2>
-                  </div>
+<a href="#mangas" className="banner-btn">
+📖 Começar a Ler
+</a>
 
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
+</div>
 
-    </div>
-  );
+</div>
+
+
+<div className="container" id="mangas">
+
+{/* BUSCA */}
+
+<input
+type="text"
+placeholder="Buscar mangá..."
+value={search}
+onChange={(e)=>setSearch(e.target.value)}
+/>
+
+
+{/* POPULARES */}
+
+<h2 className="section-title">🔥 Populares</h2>
+
+<div className="horizontal-scroll">
+
+{populares.map((manga)=>(
+<Link key={manga.id} href={`/obra/${manga.id}`}>
+
+<div className="card horizontal">
+
+<img
+src={`/mangas/${manga.id}/cover.jpg`}
+alt={manga.title}
+/>
+
+<h2>{manga.title}</h2>
+
+</div>
+
+</Link>
+))}
+
+</div>
+
+
+{/* RECENTES */}
+
+<h2 className="section-title">⚡ Recentes</h2>
+
+<div className="horizontal-scroll">
+
+{recentes.map((manga)=>(
+<Link key={manga.id} href={`/obra/${manga.id}`}>
+
+<div className="card horizontal">
+
+<img
+src={`/mangas/${manga.id}/cover.jpg`}
+alt={manga.title}
+/>
+
+<h2>{manga.title}</h2>
+
+</div>
+
+</Link>
+))}
+
+</div>
+
+
+{/* TODOS */}
+
+<h2 className="section-title">📚 Todos os Mangás</h2>
+
+<div className="grid">
+
+{filtered.map((manga)=>(
+<Link key={manga.id} href={`/obra/${manga.id}`}>
+
+<div className="card">
+
+<img
+src={`/mangas/${manga.id}/cover.jpg`}
+alt={manga.title}
+/>
+
+<h2>{manga.title}</h2>
+
+</div>
+
+</Link>
+))}
+
+</div>
+
+</div>
+
+</div>
+
+);
+
 }

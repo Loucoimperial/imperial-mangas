@@ -2,121 +2,126 @@
 
 import { use } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { mangas } from "@/data/mangas";
+import { mangas } from "../../data/mangas";
 
 interface Props {
-  params: Promise<{ id: string }>;
+params: Promise<{ id: string }>;
 }
 
 export default function Obra({ params }: Props) {
-  const { id } = use(params);
-  const manga = mangas.find((m) => m.id === id);
 
-  if (!manga) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Obra não encontrada
-      </div>
-    );
-  }
+const resolved = use(params);
 
-  const orderedChapters = [...manga.chapters].reverse();
+const manga = mangas.find((m) => m.id === resolved.id);
 
-  return (
-    <div className="min-h-screen flex justify-center py-20 bg-[#0b0b0f]">
+if (!manga) {
+return <div className="container">Obra não encontrada</div>;
+}
 
-      <div className="w-full max-w-[1000px] px-6">
+const ordered = [...manga.chapters].reverse();
 
-        {/* CARD PRINCIPAL */}
-        <div className="bg-[#14141a] rounded-md shadow-lg p-6">
+return (
 
-          <div className="flex gap-8">
+<div className="obra-wrapper">
 
-            {/* CAPA */}
-            <div className="w-[170px] flex-shrink-0">
-              <Image
-                src={manga.cover}
-                alt={manga.title}
-                width={170}
-                height={250}
-                className="rounded"
-              />
-            </div>
+<div className="obra-card">
 
-            {/* INFORMAÇÕES */}
-            <div className="flex-1">
+<img
+src={`/mangas/${manga.id}/cover.jpg`}
+className="obra-cover"
+alt={manga.title}
+/>
 
-              <h1 className="text-xl font-bold mb-3">
-                {manga.title}
-              </h1>
+<div className="obra-info">
 
-              <div className="flex gap-2 mb-4">
-                <span className="bg-yellow-500 text-black text-xs px-2 py-1 rounded">
-                  Ação
-                </span>
-                <span className="bg-yellow-500 text-black text-xs px-2 py-1 rounded">
-                  Fantasia
-                </span>
-                <span className="bg-yellow-500 text-black text-xs px-2 py-1 rounded">
-                  Manhwa
-                </span>
-              </div>
+<h1>{manga.title}</h1>
 
-              <p className="text-sm text-gray-400 leading-relaxed mb-5">
-                {manga.description}
-              </p>
+{/* GENEROS */}
 
-              <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-400 mb-5">
-                <p><span className="text-white">Status:</span> Em andamento</p>
-                <p><span className="text-white">Tipo:</span> Manhwa</p>
-                <p><span className="text-white">Ano:</span> 2024</p>
-                <p><span className="text-white">Autor:</span> Desconhecido</p>
-              </div>
+<div className="genres">
+<span>Ação</span>
+<span>Fantasia</span>
+<span>Aventura</span>
+</div>
 
-              <div className="flex gap-3">
-                <Link
-                  href={`/capitulo/${manga.id}/${manga.chapters[0].number}`}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 py-2 rounded font-semibold transition"
-                >
-                  Primeiro Capítulo
-                </Link>
+{/* INFO */}
 
-                <Link
-                  href={`/capitulo/${manga.id}/${manga.chapters[manga.chapters.length - 1].number}`}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-4 py-2 rounded font-semibold transition"
-                >
-                  Último Capítulo
-                </Link>
-              </div>
+<div className="obra-meta">
 
-            </div>
-          </div>
-        </div>
+<p>
+<strong>Autor:</strong> {manga.author}
+</p>
 
-        {/* CARD CAPÍTULOS */}
-        <div className="bg-[#14141a] rounded-md shadow-lg p-6 mt-6">
+<p>
+<strong>Status:</strong> {manga.status}
+</p>
 
-          <h2 className="text-sm font-semibold mb-4 border-b border-gray-700 pb-2">
-            Lista de Capítulos
-          </h2>
+<p>
+<strong>Ano:</strong> {manga.year}
+</p>
 
-          <div className="flex flex-col gap-2 max-h-80 overflow-y-auto">
-            {orderedChapters.map((cap) => (
-              <Link
-                key={cap.number}
-                href={`/capitulo/${manga.id}/${cap.number}`}
-                className="bg-[#1c1c24] hover:bg-yellow-500 hover:text-black text-sm p-2 rounded transition flex justify-between"
-              >
-                <span>Capítulo {cap.number}</span>
-                <span>→</span>
-              </Link>
-            ))}
-          </div>
+</div>
 
-        </div>
+{/* DESCRIÇÃO */}
 
-      </div>
-    </div>
-  );
+<div className="obra-description">
+
+<h3>Descrição</h3>
+
+<p>
+{manga.description}
+</p>
+
+</div>
+
+{/* BOTÕES */}
+
+<div className="obra-buttons">
+
+<Link
+href={`/capitulo/${manga.id}/${manga.chapters[0].number}`}
+className="gold-btn"
+>
+Primeiro Capítulo
+</Link>
+
+<Link
+href={`/capitulo/${manga.id}/${manga.chapters[manga.chapters.length - 1].number}`}
+className="gold-btn"
+>
+Último Capítulo
+</Link>
+
+<button className="fav-btn">
+⭐ Favoritar
+</button>
+
+</div>
+
+</div>
+</div>
+
+{/* CAPITULOS */}
+
+<div className="chapters-card">
+
+<h2>Lista de Capítulos</h2>
+
+{ordered.map((cap) => (
+
+<Link
+key={cap.number}
+href={`/capitulo/${manga.id}/${cap.number}`}
+className="chapter-item"
+>
+Capítulo {cap.number}
+</Link>
+
+))}
+
+</div>
+
+</div>
+
+);
 }

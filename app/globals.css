@@ -1,39 +1,738 @@
-@import "tailwindcss";
+/* ============================= */
+/* RESET */
+/* ============================= */
 
-@keyframes zoom {
-  from {
-    transform: scale(1.05);
-  }
-  to {
-    transform: scale(1.15);
-  }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}@keyframes zoom {
-  from {
-    transform: scale(1.05);
-  }
-  to {
-    transform: scale(1.15);
-  }
+/* ============================= */
+/* BODY */
+/* ============================= */
+
+body{
+
+background:#0b0b0f;
+color:#f5f5f5;
+font-family:Arial, sans-serif;
+scroll-behavior:smooth;
+
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ============================= */
+/* NAVBAR */
+/* ============================= */
+
+.navbar{
+
+position:sticky;
+top:0;
+
+z-index:9999;
+
+background:rgba(10,10,15,0.95);
+backdrop-filter:blur(10px);
+
+border-bottom:1px solid #222;
+
+}
+
+.nav-container{
+
+max-width:1300px;
+margin:auto;
+
+padding:15px 20px;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+}
+
+.nav-logo{
+
+font-size:22px;
+font-weight:bold;
+
+text-decoration:none;
+
+color:white;
+
+}
+
+.nav-logo span{
+
+color:#ff3c3c;
+
+}
+
+.nav-links{
+
+display:flex;
+gap:25px;
+align-items:center;
+
+}
+
+.nav-links a{
+
+text-decoration:none;
+color:#ddd;
+
+transition:0.3s;
+
+}
+
+.nav-links a:hover{
+
+color:#ff3c3c;
+
+}
+
+/* ============================= */
+/* BANNER */
+/* ============================= */
+
+.home-banner{
+
+width:100%;
+height:420px;
+
+background-image:url("/banner.jpg");
+background-size:cover;
+background-position:center 70%;
+background-repeat:no-repeat;
+
+display:flex;
+align-items:center;
+
+position:relative;
+
+z-index:1;
+
+animation:bannerZoom 15s ease-in-out infinite alternate;
+
+}
+
+.home-banner::before{
+
+content:"";
+
+position:absolute;
+inset:0;
+
+background:rgba(0,0,0,0.55);
+
+}
+
+.banner-overlay{
+
+position:relative;
+z-index:2;
+
+max-width:1300px;
+
+width:100%;
+
+margin:auto;
+
+padding:0 40px;
+
+animation:fadeSlideUp 1s ease-out forwards;
+
+}
+
+.banner-overlay h1{
+
+font-size:52px;
+margin-bottom:15px;
+
+}
+
+.banner-overlay p{
+
+font-size:20px;
+color:#ddd;
+
+}
+
+/* ============================= */
+/* BOTÃO */
+/* ============================= */
+
+.banner-btn{
+
+display:inline-block;
+
+margin-top:20px;
+
+padding:14px 28px;
+
+background:#ff3c3c;
+
+color:white;
+
+font-weight:bold;
+
+border-radius:8px;
+
+text-decoration:none;
+
+transition:0.3s;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.banner-btn:hover{
+
+transform:translateY(-2px);
+box-shadow:0 6px 16px rgba(255,60,60,0.35);
+
+}
+
+.banner-btn::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+left:-150%;
+
+width:50%;
+height:100%;
+
+background:linear-gradient(
+120deg,
+transparent,
+rgba(255,255,255,0.4),
+transparent
+);
+
+transform:skewX(-20deg);
+
+transition:0.6s;
+
+}
+
+.banner-btn:hover::before{
+
+left:150%;
+
+}
+
+/* ============================= */
+/* CONTAINER */
+/* ============================= */
+
+.container{
+
+max-width:1300px;
+margin:auto;
+
+padding:40px 20px;
+
+}
+
+/* ============================= */
+/* INPUT */
+/* ============================= */
+
+input{
+
+padding:12px;
+
+border-radius:8px;
+
+border:1px solid #333;
+
+background:#1a1a22;
+
+color:white;
+
+width:100%;
+
+margin-bottom:25px;
+
+}
+
+input:focus{
+
+outline:none;
+border-color:#ff3c3c;
+
+}
+
+/* ============================= */
+/* GRID */
+/* ============================= */
+
+.grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+
+gap:25px;
+
+}
+
+/* ============================= */
+/* CARD */
+/* ============================= */
+
+.card{
+
+background:#1a1a22;
+
+border-radius:12px;
+
+overflow:hidden;
+
+transition:0.3s;
+
+cursor:pointer;
+
+}
+
+.card:hover{
+
+transform:translateY(-6px);
+
+}
+
+.card img{
+
+width:100%;
+height:320px;
+
+object-fit:cover;
+
+}
+
+.card h2{
+
+padding:12px;
+font-size:18px;
+
+}
+
+/* ============================= */
+/* ANIMAÇÕES */
+/* ============================= */
+
+@keyframes fadeSlideUp{
+
+from{
+
+opacity:0;
+transform:translateY(30px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+}
+
+@keyframes bannerZoom{
+
+from{
+
+background-size:105%;
+
+}
+
+to{
+
+background-size:110%;
+
+}
+
+}
+
+/* SEÇÕES */
+
+.section-title{
+
+font-size:22px;
+margin-bottom:15px;
+margin-top:35px;
+
+}
+
+/* SCROLL HORIZONTAL */
+
+.horizontal-scroll{
+
+display:flex;
+
+gap:20px;
+
+overflow-x:auto;
+
+padding-bottom:20px;
+
+scroll-behavior:smooth;
+
+}
+
+.horizontal-scroll::-webkit-scrollbar{
+
+height:8px;
+
+}
+
+.horizontal-scroll::-webkit-scrollbar-thumb{
+
+background:#333;
+border-radius:10px;
+
+}
+
+/* CARD HORIZONTAL */
+
+.card.horizontal{
+
+min-width:180px;
+
+}
+
+.card.horizontal img{
+
+height:260px;
+
+}
+
+/* NAVBAR */
+
+.navbar{
+background:#111;
+padding:15px 0;
+border-bottom:1px solid #222;
+}
+
+.nav-container{
+max-width:1200px;
+margin:auto;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+text-decoration:none;
+color:white;
+}
+
+.logo span{
+color:#ff3c3c;
+}
+
+.nav-links{
+display:flex;
+gap:25px;
+}
+
+.nav-links a{
+color:#ccc;
+text-decoration:none;
+transition:0.3s;
+}
+
+.nav-links a:hover{
+color:#ff3c3c;
+}
+
+
+/* OBRA */
+
+.obra-page{
+padding:40px 20px;
+}
+
+.obra-container{
+max-width:1100px;
+margin:auto;
+}
+
+.obra-card{
+display:flex;
+gap:30px;
+background:#16161d;
+padding:25px;
+border-radius:10px;
+}
+
+.obra-cover{
+width:200px;
+border-radius:8px;
+}
+
+.obra-info h1{
+margin-bottom:15px;
+}
+
+.obra-desc{
+color:#aaa;
+line-height:1.6;
+margin-bottom:20px;
+}
+
+.btn-read{
+background:#ff3c3c;
+padding:10px 20px;
+border-radius:6px;
+text-decoration:none;
+color:white;
+}
+
+.btn-read:hover{
+background:#ff2020;
+}
+
+/* CAPÍTULOS */
+
+.chapters{
+margin-top:30px;
+background:#16161d;
+padding:20px;
+border-radius:10px;
+}
+
+.chapter{
+display:block;
+padding:10px;
+border-bottom:1px solid #222;
+text-decoration:none;
+color:#ccc;
+}
+
+.chapter:hover{
+background:#222;
+color:white;
+}
+
+/* PAGINA MANGAS */
+
+.page-title{
+font-size:28px;
+margin-bottom:25px;
+}
+
+.mangas-grid{
+
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+gap:25px;
+
+}
+
+.manga-card{
+
+background:#1a1a22;
+border-radius:10px;
+overflow:hidden;
+transition:0.3s;
+
+}
+
+.manga-card:hover{
+
+transform:translateY(-6px);
+
+}
+
+.manga-card img{
+
+width:100%;
+height:250px;
+object-fit:cover;
+
+}
+
+.manga-card h3{
+
+padding:10px;
+font-size:14px;
+text-align:center;
+
+}
+
+
+/* PAGINA OBRA */
+
+.obra-wrapper{
+
+max-width:1000px;
+margin:auto;
+
+}
+
+.obra-card{
+
+display:flex;
+gap:30px;
+background:#16161d;
+padding:25px;
+border-radius:10px;
+
+}
+
+.obra-cover{
+
+width:200px;
+border-radius:8px;
+
+}
+
+.obra-info{
+
+flex:1;
+
+}
+
+.obra-desc{
+
+margin-top:10px;
+color:#aaa;
+
+}
+
+
+/* BOTÃO DOURADO */
+
+.gold-btn{
+
+background:linear-gradient(45deg,#c89b3c,#f0c75e);
+padding:12px 20px;
+border-radius:6px;
+text-decoration:none;
+color:black;
+font-weight:bold;
+margin-right:10px;
+
+}
+
+.gold-btn:hover{
+
+background:linear-gradient(45deg,#f0c75e,#c89b3c);
+
+}
+
+
+/* CAPITULOS */
+
+.chapters-card{
+
+margin-top:20px;
+background:#16161d;
+padding:20px;
+border-radius:10px;
+
+}
+
+.chapter-item{
+
+display:block;
+padding:10px;
+border-bottom:1px solid #222;
+color:#ddd;
+text-decoration:none;
+
+}
+
+.chapter-item:hover{
+
+background:#222;
+
+}
+
+/* GENEROS */
+
+.genres{
+
+display:flex;
+gap:10px;
+margin:10px 0;
+
+}
+
+.genres span{
+
+background:#222;
+padding:6px 12px;
+border-radius:6px;
+font-size:12px;
+
+}
+
+/* META INFO */
+
+.obra-meta{
+
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:8px;
+margin:15px 0;
+
+}
+
+.obra-meta p{
+
+font-size:14px;
+color:#bbb;
+
+}
+
+/* BOTÃO FAVORITO */
+
+.fav-btn{
+
+background:#222;
+color:#fff;
+border:none;
+padding:12px 18px;
+border-radius:6px;
+cursor:pointer;
+
+}
+
+.fav-btn:hover{
+
+background:#333;
+
+}
+
+.obra-description{
+
+margin-top:20px;
+
+}
+
+.obra-description h3{
+
+font-size:18px;
+margin-bottom:8px;
+
+}
+
+.obra-description p{
+
+color:#bbb;
+line-height:1.6;
+
 }
