@@ -4,59 +4,12 @@ generator client {
 
 datasource db {
  provider = "postgresql"
- url      = env("DATABASE_URL")
 }
 
 model User {
- id        String   @id @default(cuid())
- email     String   @unique
- username  String
- password  String
- role      String   @default("user")
-
- favorites Favorite[]
- history   History[]
-
- createdAt DateTime @default(now())
-}
-
-model Manga {
- id          String   @id
- title       String
- description String?
- cover       String?
-
- chapters Chapter[]
-
- favorites Favorite[]
- history   History[]
-}
-
-model Chapter {
  id       String @id @default(cuid())
- number   Int
- mangaId  String
-
- manga    Manga @relation(fields: [mangaId], references: [id])
-}
-
-model Favorite {
- id      String @id @default(cuid())
-
- userId  String
- mangaId String
-
- user  User  @relation(fields: [userId], references: [id])
- manga Manga @relation(fields: [mangaId], references: [id])
-}
-
-model History {
- id      String @id @default(cuid())
-
- userId    String
- mangaId   String
- chapter   Int
-
- user  User  @relation(fields: [userId], references: [id])
- manga Manga @relation(fields: [mangaId], references: [id])
+ email    String @unique
+ username String
+ password String
+ role     String @default("USER")
 }
