@@ -1,6 +1,5 @@
 export type Chapter = {
   number: number;
-  pages: number;
 };
 
 export type Manga = {
@@ -8,5 +7,8 @@ export type Manga = {
   title: string;
   description: string;
   cover: string;
+  author?: string;
+  status?: string;
+  year?: number;
   chapters: Chapter[];
 };
