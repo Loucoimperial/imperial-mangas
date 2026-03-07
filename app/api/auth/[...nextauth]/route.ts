@@ -1,9 +1,9 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { prisma } from "@/app/lib/prisma"
-import bcrypt from "bcryptjs"
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "@/app/lib/prisma";
+import bcrypt from "bcryptjs";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 const handler = NextAuth({
 
@@ -20,25 +20,27 @@ const handler = NextAuth({
 
    async authorize(credentials) {
 
-    const user = await prisma.user.findUnique({
-     where: { email: credentials?.email }
-    })
+    if(!credentials) return null;
 
-    if (!user) return null
+    const user = await prisma.user.findUnique({
+     where:{ email: credentials.email }
+    });
+
+    if(!user) return null;
 
     const valid = await bcrypt.compare(
-      credentials!.password,
-      user.password
-    )
+     credentials.password,
+     user.password
+    );
 
-    if (!valid) return null
+    if(!valid) return null;
 
     return {
-      id: user.id,
-      email: user.email,
-      name: user.username,
-      role: user.role
-    }
+     id:user.id,
+     email:user.email,
+     name:user.username,
+     role:user.role
+    };
 
    }
 
@@ -46,12 +48,12 @@ const handler = NextAuth({
 
  ],
 
- session: {
-  strategy: "jwt"
+ session:{
+  strategy:"jwt"
  },
 
- secret: process.env.NEXTAUTH_SECRET
+ secret:process.env.NEXTAUTH_SECRET
 
-})
+});
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
