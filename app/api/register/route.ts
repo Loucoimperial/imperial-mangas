@@ -1,22 +1,38 @@
-import { prisma } from "@/app/lib/prisma";
-import bcrypt from "bcryptjs";
+import { prisma } from "@/app/lib/prisma"
+import bcrypt from "bcryptjs"
 
-export async function POST(req:Request){
+export const dynamic = "force-dynamic"
 
-const body = await req.json();
+export async function POST(req: Request) {
 
-const hash = await bcrypt.hash(body.password,10);
+ const body = await req.json()
 
-await prisma.user.create({
+ const { email, username, password } = body
 
- data:{
-  email:body.email,
-  username:body.username,
-  password:hash
+ const existing = await prisma.user.findUnique({
+  where: { email }
+ })
+
+ if (existing) {
+  return new Response(
+   JSON.stringify({ error: "Usuário já existe" }),
+   { status: 400 }
+  )
  }
 
-});
+ const hash = await bcrypt.hash(password, 10)
 
-return Response.json({ok:true});
+ const user = await prisma.user.create({
+  data: {
+   email,
+   username,
+   password: hash
+  }
+ })
+
+ return Response.json({
+  id: user.id,
+  email: user.email
+ })
 
 }
