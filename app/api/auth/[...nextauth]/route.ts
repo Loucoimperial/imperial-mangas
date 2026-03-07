@@ -1,59 +1,58 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "@/app/lib/prisma";
-import bcrypt from "bcryptjs";
+export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
-export const dynamic = "force-dynamic";
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { prisma } from "@/app/lib/prisma"
+import bcrypt from "bcryptjs"
 
 const handler = NextAuth({
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
 
- providers: [
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        })
 
-  CredentialsProvider({
+        if (!user) {
+          return null
+        }
 
-   name: "credentials",
+        const passwordMatch = await bcrypt.compare(
+          credentials.password,
+          user.password
+        )
 
-   credentials: {
-    email: {},
-    password: {}
-   },
+        if (!passwordMatch) {
+          return null
+        }
 
-   async authorize(credentials) {
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name
+        }
+      }
+    })
+  ],
+  session: {
+    strategy: "jwt"
+  },
+  pages: {
+    signIn: "/login"
+  },
+  secret: process.env.NEXTAUTH_SECRET
+})
 
-    if(!credentials) return null;
-
-    const user = await prisma.user.findUnique({
-     where:{ email: credentials.email }
-    });
-
-    if(!user) return null;
-
-    const valid = await bcrypt.compare(
-     credentials.password,
-     user.password
-    );
-
-    if(!valid) return null;
-
-    return {
-     id:user.id,
-     email:user.email,
-     name:user.username,
-     role:user.role
-    };
-
-   }
-
-  })
-
- ],
-
- session:{
-  strategy:"jwt"
- },
-
- secret:process.env.NEXTAUTH_SECRET
-
-});
-
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }
