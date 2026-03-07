@@ -1,61 +1,57 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "@/app/lib/prisma";
-import bcrypt from "bcryptjs";
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { prisma } from "@/app/lib/prisma"
+import bcrypt from "bcryptjs"
+
+export const dynamic = "force-dynamic"
 
 const handler = NextAuth({
 
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
+ providers: [
 
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Senha", type: "password" }
-      },
+  CredentialsProvider({
 
-      async authorize(credentials) {
+   name: "credentials",
 
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
+   credentials: {
+    email: {},
+    password: {}
+   },
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
-          }
-        });
+   async authorize(credentials) {
 
-        if (!user) return null;
-
-        const validPassword = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!validPassword) return null;
-
-        return {
-          id: user.id,
-          name: user.username,
-          email: user.email,
-          role: user.role
-        };
-
-      }
+    const user = await prisma.user.findUnique({
+     where: { email: credentials?.email }
     })
-  ],
 
-  session: {
-    strategy: "jwt"
-  },
+    if (!user) return null
 
-  pages: {
-    signIn: "/login"
-  },
+    const valid = await bcrypt.compare(
+      credentials!.password,
+      user.password
+    )
 
-  secret: process.env.NEXTAUTH_SECRET
+    if (!valid) return null
 
-});
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.username,
+      role: user.role
+    }
 
-export { handler as GET, handler as POST };
+   }
+
+  })
+
+ ],
+
+ session: {
+  strategy: "jwt"
+ },
+
+ secret: process.env.NEXTAUTH_SECRET
+
+})
+
+export { handler as GET, handler as POST }
